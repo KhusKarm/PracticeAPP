@@ -2,9 +2,9 @@ let currentIndex = 0;
 let currentMessage = "";
 let intervalId = null;
 
-// Display default null image on load
+// Display default BASE image on load
 function showDefaultSymbol() {
-  document.getElementById("symbolImg").src = getSymbolImage("null");
+  document.getElementById("symbolImg").src = getSymbolImage("BASE");
 }
 
 // Stop the current symbol display
@@ -48,77 +48,79 @@ function applySubstitutions(text) {
 }
 
 function getSymbolImage(letter) {
-  if (letter === "null") return "symbol/null.jpg";
-  if (letter === "number") return "symbol/number.jpg";
-  return `symbol/${letter.toLowerCase()}.jpg`;
+  if (letter === "BASE") return "symbol/BASE.jpg";
+  if (letter === "NUM") return "symbol/NUM.jpg";
+  return `symbol/${letter.toUpperCase()}.jpg`;
 }
 
 // Converts the message into a sequence of symbols and displays them with interval
 function displaySymbols(message) {
-  document.getElementById("symbolImg").src = getSymbolImage("null");
+  document.getElementById("symbolImg").src = getSymbolImage("BASE");
   const numberWords = {
-    "0": "ZERO", "1": "ONE", "2": "TWO", "3": "THREE",
-    "4": "FOUR", "5": "FIVE", "6": "SIX", "7": "SEVEN",
-    "8": "EIGHT", "9": "NINE"
+    "0": "ZRO", "1": "ONE", "2": "TWO", "3": "TRE",
+    "4": "FOR", "5": "FIV", "6": "SIX", "7": "SEV",
+    "8": "ATE", "9": "NIN"
   };
 
-  const segments = message.trim().split(/\s+/);
+  //const segments = message.trim().split(/\s+/);
+const segments = message.trim().split(/\s+/); // split by space
+
   const symbolSequence = [];
 
   segments.forEach(segment => {
     if (/^[0-9]+$/.test(segment)) {
       // Handle pure numbers
-      symbolSequence.push("number");
+      symbolSequence.push("NUM");
       for (const digit of segment) {
-        symbolSequence.push("null");
+        symbolSequence.push("BASE");
         symbolSequence.push(...numberWords[digit].split(""));
-        symbolSequence.push("null");
+        symbolSequence.push("BASE");
       }
-      symbolSequence.push("number");
+      symbolSequence.push("NUM");
     } else if (/^[a-zA-Z]+$/.test(segment)) {
       // Handle pure letters
-      symbolSequence.push("null");
+      symbolSequence.push("BASE");
       symbolSequence.push(...segment.toUpperCase().split(""));
-      symbolSequence.push("null");
+      symbolSequence.push("BASE");
     } else {
       // Mixed content: split letters and numbers
       let lettersOnly = '', digitsOnly = '';
       for (let char of segment) {
         if (/\d/.test(char)) {
           if (lettersOnly) {
-            symbolSequence.push("null");
+            symbolSequence.push("BASE");
             symbolSequence.push(...lettersOnly.toUpperCase().split(""));
-            symbolSequence.push("null");
+            symbolSequence.push("BASE");
             lettersOnly = '';
           }
           digitsOnly += char;
         } else {
           if (digitsOnly) {
-            symbolSequence.push("number");
+            symbolSequence.push("NUM");
             for (const digit of digitsOnly) {
-              symbolSequence.push("null");
+              symbolSequence.push("BASE");
               symbolSequence.push(...numberWords[digit].split(""));
-              symbolSequence.push("null");
+              symbolSequence.push("BASE");
             }
-            symbolSequence.push("number");
+            symbolSequence.push("NUM");
             digitsOnly = '';
           }
           lettersOnly += char;
         }
       }
       if (lettersOnly) {
-        symbolSequence.push("null");
+        symbolSequence.push("BASE");
         symbolSequence.push(...lettersOnly.toUpperCase().split(""));
-        symbolSequence.push("null");
+        symbolSequence.push("BASE");
       }
       if (digitsOnly) {
-        symbolSequence.push("number");
+        symbolSequence.push("NUM");
         for (const digit of digitsOnly) {
-          symbolSequence.push("null");
+          symbolSequence.push("BASE");
           symbolSequence.push(...numberWords[digit].split(""));
-          symbolSequence.push("null");
+          symbolSequence.push("BASE");
         }
-        symbolSequence.push("number");
+        symbolSequence.push("NUM");
       }
     }
   });
